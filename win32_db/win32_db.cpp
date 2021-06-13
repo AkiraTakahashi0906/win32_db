@@ -17,13 +17,24 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ ク
 
 void MyPaint(HWND);
 void MyButtonSetUp(HWND, HINSTANCE);
-void MyButton1CommandExecute(HWND hWnd);
-void MyButton2CommandExecute(HWND hWnd);
-void MyButton3CommandExecute(HWND hWnd);
+void MyListSetup(HWND, LPARAM);
+void MyButton1CommandExecute(HWND);
+void MyButton2CommandExecute(HWND);
+void MyButton3CommandExecute(HWND);
 
 std::wstring text1 = L"text1";
 std::wstring text2 = L"text2";
 std::wstring text3 = L"text3";
+
+unsigned int lCount;
+
+LPCTSTR strText[] = {
+    TEXT("Kitty on your lap") ,
+    TEXT("Tokyo mew mew") ,
+    TEXT("Magical nyan nyan TARUTO") ,
+    TEXT("Di Gi Charat") ,
+    TEXT("Nekoneko Zoo")
+};
 
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -110,7 +121,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // グローバル変数にインスタンス ハンドルを格納する
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, CW_USEDEFAULT, 600,300, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, CW_USEDEFAULT, 600,400, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -139,7 +150,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+        SetTimer(hWnd, 1, 5000, NULL);
         MyButtonSetUp(hWnd, hInst);
+        MyListSetup(hWnd, lParam);
         break;
 
     case WM_COMMAND:
@@ -174,6 +187,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
         }
+        break;
+    case WM_TIMER:
+        MyButton1CommandExecute(hWnd);
+        InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
         {
@@ -272,4 +289,29 @@ void MyButtonSetUp(HWND hWnd, HINSTANCE hInst) {
         WS_CHILD | WS_VISIBLE | BS_FLAT,
         400, 100, 80, 30,
         hWnd, (HMENU)ID_BUTTON3, hInst, NULL);
+}
+
+void MyListSetup(HWND hWnd, LPARAM lParam) {
+    static HWND sortList, nonSortList;
+    int i;
+    sortList = CreateWindow(
+        TEXT("LISTBOX"), NULL,
+        WS_CHILD | WS_VISIBLE | LBS_STANDARD,
+        0, 200, 200, 100, hWnd, (HMENU)1,
+        ((LPCREATESTRUCT)(lParam))->hInstance, NULL
+    );
+
+    for (i = 0; i < 5; i++)
+        SendMessage(sortList, LB_ADDSTRING, 0, (LPARAM)strText[i]);
+
+    nonSortList = CreateWindow(
+        TEXT("LISTBOX"), NULL,
+        WS_CHILD | WS_VISIBLE | WS_BORDER,
+        200, 200, 200, 100, hWnd, (HMENU)1,
+        ((LPCREATESTRUCT)(lParam))->hInstance, NULL
+    );
+    for (i = 0; i < 5; i++)
+        SendMessage(nonSortList,
+            LB_INSERTSTRING, i, (LPARAM)strText[i]
+        );
 }
