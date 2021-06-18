@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="bom_entity.h" />
     <ClInclude Include="bom_sqlserver.h" />
+    <ClInclude Include="db_files_entity.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="sqlserver_helper.h" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="bom_entity.cpp" />
     <ClCompile Include="bom_sqlserver.cpp" />
+    <ClCompile Include="db_files_entity.cpp" />
     <ClCompile Include="sqlserver_helper.cpp" />
     <ClCompile Include="string_wstring_convert.cpp" />
     <ClCompile Include="win32_db.cpp" />
